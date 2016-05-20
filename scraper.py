@@ -62,13 +62,18 @@ def get_app_info(soup):
         appinfo['name'] = soup.find('div', class_='id-app-title').contents[0]
         appinfo['developer'] = soup.find('a', class_='document-subtitle primary').contents[1].contents[0]
         appinfo['genre'] = soup.find('span', itemprop='genre').contents[0]
-        appinfo['score'] = soup.find('div', class_='score').contents[0]
 
         rating_badge = soup.find('img', class_='content-rating-badge')
         if rating_badge is None:
             appinfo['rated'] = 'Unrated'
         else:
             appinfo['rated'] = rating_badge['alt']
+
+        score = soup.find('div', class_='score')
+        if score is None:
+            appinfo['score'] = 'Unscored'
+        else:
+            appinfo['score'] = score.contents[0]
     except AttributeError as e:
         print('package {} failed to get some data returning what we have'.format(appinfo['package']))
         traceback.print_exc()
