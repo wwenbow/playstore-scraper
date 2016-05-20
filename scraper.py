@@ -44,10 +44,10 @@ def get_info(url, sem):
 def save_info(url, package, sem, outdir):
     info = yield from get_info(url, sem)
     if info == 'blacklist':
-        with open(outdir + '/blacklist.txt', 'w') as blacklist:
+        with open(outdir + '/blacklist.txt', 'a') as blacklist:
             blacklist.write(package + '\n')
     else:
-        with open(outdir + '/appdata.json', 'w') as outfile:
+        with open(outdir + '/appdata.json', 'a') as outfile:
             json.dump(info, outfile)
             outfile.write('\n')
     return
