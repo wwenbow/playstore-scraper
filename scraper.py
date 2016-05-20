@@ -104,7 +104,7 @@ def main():
     baseurl = 'https://play.google.com/store/apps/details'
     country = 'ph'
 
-    sem = asyncio.Semaphore(10)
+    sem = asyncio.Semaphore(25)
     loop = asyncio.get_event_loop()
     tasks = []
 
@@ -118,7 +118,8 @@ def main():
 
     loop.run_until_complete(wait_with_progress(tasks))
     loop.close()
-    return 0
+    print('completed event loop')
+    sys.exit(0)
 
 
 if __name__ == "__main__":
