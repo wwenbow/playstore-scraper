@@ -9,6 +9,7 @@ import aiohttp
 import tqdm
 import argparse
 import os
+import traceback
 
 
 @asyncio.coroutine
@@ -56,11 +57,12 @@ def save_info(url, package, sem, outdir):
 def get_app_info(soup):
     appinfo = {}
     try:
+        appinfo['package'] = soup.find('div', class_='details-wrapper')['data-docid']
         appinfo['icon'] = soup.find('img', alt='Cover art')['src']
         appinfo['name'] = soup.find('div', class_='id-app-title').contents[0]
-        appinfo['score'] = soup.find('div', class_='score').contents[0]
-        appinfo['genre'] = soup.find('span', itemprop='genre').contents[0]
         appinfo['developer'] = soup.find('a', class_='document-subtitle primary').contents[1].contents[0]
+        appinfo['genre'] = soup.find('span', itemprop='genre').contents[0]
+        appinfo['score'] = soup.find('div', class_='score').contents[0]
 
         rating_badge = soup.find('img', class_='content-rating-badge')
         if rating_badge is None:
@@ -68,9 +70,8 @@ def get_app_info(soup):
         else:
             appinfo['rated'] = rating_badge['alt']
     except AttributeError as e:
-        print(soup.title)
-        print(e)
-        sys.exit(1)
+        print('package {} failed to get some data returning what we have'.format(appinfo['package']))
+        traceback.print_exc()
     finally:
         return appinfo
 
@@ -112,6 +113,7 @@ def main():
 
     loop.run_until_complete(wait_with_progress(tasks))
     loop.close()
+    return 0
 
 
 if __name__ == "__main__":
