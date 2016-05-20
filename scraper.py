@@ -7,6 +7,8 @@ import sys
 import asyncio
 import aiohttp
 import tqdm
+import argparse
+import os
 
 
 @asyncio.coroutine
@@ -38,13 +40,13 @@ def get_info(url, sem):
 
 
 @asyncio.coroutine
-def save_info(url, package, sem):
+def save_info(url, package, sem, outdir):
     info = yield from get_info(url, sem)
     if info == 'blacklist':
-        with open('blacklist.txt', 'a') as blacklist:
+        with open(outdir + '/blacklist.txt', 'w') as blacklist:
             blacklist.write(package + '\n')
     else:
-        with open('appdata.json', 'a') as outfile:
+        with open(outdir + '/appdata.json', 'w') as outfile:
             json.dump(info, outfile)
             outfile.write('\n')
     return
@@ -83,6 +85,16 @@ def get_similar_items(soup):
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Scrape the play store for package meta data')
+    parser.add_argument('-o', '--output', help='output directory')
+    args = parser.parse_args()
+
+    if args.output is None:
+        print('please specify output directory')
+        sys.exit(1)
+
+    os.mkdir(args.output)
+
     baseurl = 'https://play.google.com/store/apps/details'
     country = 'ph'
 
@@ -90,26 +102,13 @@ def main():
     loop = asyncio.get_event_loop()
     tasks = []
 
-    with open('packagesC.txt') as pkglist:
+    with open('packages.txt') as pkglist:
         for package in pkglist.readlines():
             package = package.splitlines()[0]
             print(package)
 
             url = '{}?id={}&gl={}'.format(baseurl, package, country)
-            tasks.append(save_info(url, package, sem))
-            # r = requests.get(url)
-            # if r.status_code != 200:
-            #     print('blacklisted')
-            #     blacklist.write(package + '\n')
-            # else:
-            #     soup = BeautifulSoup(r.text, 'html.parser')
-            #
-            #     appinfo = getAppInfo(soup)
-            #     similar_items = getSimilarItems(soup)
-            #     appinfo['similar'] = similar_items
-            #
-            #     json.dump(appinfo, outfile)
-            #     outfile.write('\n')
+            tasks.append(save_info(url, package, sem, args.output))
 
     loop.run_until_complete(wait_with_progress(tasks))
     loop.close()
