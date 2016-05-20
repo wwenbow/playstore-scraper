@@ -1,0 +1,3 @@
+com.halfbrick.fruitninja
+com.sevendosoft.browser
+hu.distinction.cflow

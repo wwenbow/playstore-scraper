@@ -1,0 +1,4 @@
+*.swp
+appdata.json
+blacklist.txt
+__pycache__
