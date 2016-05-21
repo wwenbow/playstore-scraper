@@ -50,9 +50,13 @@ var main = function(){
     commander
         .version('1.0')
         .option('-i --input [in]', 'input package list [packages.txt]', 'packages.txt')
-        .option('-o --output <out>', 'output directory')
-        .option('-f --force', 'force')
+        .option('-o --output <out>', 'output directory REQUIRED')
+        .option('-f --force', 'delete output directory if it exists')
         .parse(process.argv);
+
+    if (!commander.output) {
+        commander.help();
+    }
 
     if (commander.force) {
         spawn('rm', ['-rf', commander.output]);
@@ -64,7 +68,7 @@ var main = function(){
 
     var pkgfile = fs.readFileSync(commander.input,'utf8').split('\n');
     var pkgs = pkgfile.splice(0, pkgfile.length-1);
-    
+
     var bar = new progress('  scraping [:bar] :percent eta-:etas elapsed-:elapsed  ', {total: pkgs.length});
 
     pkgs.forEach(function(pkg) {
