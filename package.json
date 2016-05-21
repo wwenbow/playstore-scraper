@@ -1,0 +1,21 @@
+{
+  "name": "playstore-scraper",
+  "version": "1.0.0",
+  "description": "scrape the playstore",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-wenbo:wwenbow/playstore-scraper.git"
+  },
+  "author": "wenbo",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "commander": "^2.9.0",
+    "progress": "^1.1.8",
+    "request": "^2.72.0"
+  }
+}

@@ -1,4 +1,5 @@
 *.swp
 appdata.json
 blacklist.txt
-__pycache__
+node_modules
+.idea
